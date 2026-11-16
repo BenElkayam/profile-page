@@ -797,3 +797,34 @@ input:valid:not(:placeholder-shown) { border-color: #34d399; }
   .hero-text > *, .hero-img { opacity: 1; }
   .typing { width: auto; }
 }
+
+/* Fix: caption under avatar was hidden by the orbits */
+.hero-img figcaption {
+  position: relative;
+  z-index: 2;
+  margin-top: 70px;
+  padding: 6px 18px;
+  border-radius: 999px;
+  background: rgba(13, 27, 46, 0.85);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+  color: var(--text);
+}
+@media (min-width: 960px) {
+  .hero-img figcaption { margin-top: 90px; }
+}
+
+/* Fix v2: caption out of the centering flow, orbits centered on image */
+.hero-img { margin-bottom: 90px; }
+.hero-img figcaption {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 55px;
+  white-space: nowrap;
+}
+@media (min-width: 960px) {
+  .hero-img { margin-bottom: 110px; }
+  .hero-img figcaption { margin-top: 85px; }
+}
