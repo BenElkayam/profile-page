@@ -1,5 +1,12 @@
 /* ==========================================================
    app.js – Vanilla JavaScript
+
+   מקרא:
+   🟢 [שיעור 2]  פונקציה מ-utils.js שכתבנו לפי שיעור הפונקציות
+   🔵 [שלנו]     פונקציה שכתבנו בקובץ הזה
+   ⚙️ [מובנה]    פונקציה כללית שמגיעה עם JavaScript או עם הדפדפן
+   הרשימה המלאה נמצאת ב-README.md
+   ----------------------------------------------------------
    1. Helpers           6. Scroll effects (progress, reveal, nav)
    2. Render sections   7. Mobile menu + theme toggle
    3. Typewriter        8. Card tilt + cursor glow
@@ -10,10 +17,11 @@
 "use strict";
 
 /* ---------- 1. Helpers ---------- */
+/* 🔵 [שלנו] arrow functions עם implicit return | ⚙️ [מובנה] querySelector */
 const $ = (selector, parent = document) => parent.querySelector(selector);
 const $$ = (selector, parent = document) => [...parent.querySelectorAll(selector)];
 
-/** Creates an element with classes, attributes and text in one call */
+/** 🔵 [שלנו] יוצרת אלמנט עם class, מאפיינים וטקסט | ⚙️ [מובנה] createElement, setAttribute, append */
 function el(tag, { className, text, attrs = {} } = {}, children = []) {
   const node = document.createElement(tag);
   if (className) node.className = className;
@@ -25,6 +33,7 @@ function el(tag, { className, text, attrs = {} } = {}, children = []) {
 
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+/* 🔵 [שלנו] default parameter | ⚙️ [מובנה] setTimeout, clearTimeout */
 function showToast(message, type = "success") {
   const toast = $("#toast");
   toast.textContent = message;
@@ -34,6 +43,7 @@ function showToast(message, type = "success") {
 }
 
 /* ---------- 2. Render sections ---------- */
+/* 🔵 [שלנו] | ⚙️ [מובנה] append */
 function renderHero() {
   const hero = $("#hero");
 
@@ -64,6 +74,7 @@ function renderHero() {
   $("#navLinkedin").href = profile.links.linkedin;
 }
 
+/* 🔵 [שלנו] | ⚙️ [מובנה] forEach */
 function renderStats() {
   const container = $("#stats");
   stats.forEach((stat) => {
@@ -75,6 +86,7 @@ function renderStats() {
   });
 }
 
+/* 🔵 [שלנו] destructuring בפרמטרים | ⚙️ [מובנה] map */
 function createCard({ icon, title, text, tags }) {
   const card = el("article", { className: "card tilt" }, [
     el("div", { className: "card-icon", text: icon }),
@@ -85,11 +97,13 @@ function createCard({ icon, title, text, tags }) {
   return card;
 }
 
+/* 🔵 [שלנו] composition – קוראת ל-createCard | ⚙️ [מובנה] map */
 function renderAbout() {
   $("#aboutText").textContent = about.text;
   $("#aboutCards").append(...about.cards.map(createCard));
 }
 
+/* 🔵 [שלנו] | ⚙️ [מובנה] map */
 function renderExperience() {
   const items = experience.map((job) =>
     el("li", {}, [
@@ -102,15 +116,17 @@ function renderExperience() {
   $("#timeline").append(...items);
 }
 
+/* 🔵 [שלנו] composition – קוראת ל-createCard */
 function renderEducation() {
   $("#educationCards").append(...education.map(createCard));
 }
 
+/* 🔵 [שלנו] | ⚙️ [מובנה] navigator.clipboard.writeText, async/await */
 function renderContact() {
   const { email, phone, linkedin } = profile.links;
   const rows = [
     { icon: "📧", text: email, href: `mailto:${email}`, copy: email },
-    { icon: "📱", text: phone, href: `tel:+972${phone.replace(/-/g, "").slice(1)}`, copy: phone },
+    { icon: "📱", text: phone, href: `tel:${formatPhone(phone)}`  /* 🟢 [שיעור 2] */, copy: phone },
     { icon: "💼", text: linkedin.replace("https://", ""), href: linkedin },
     { icon: "📍", text: profile.location },
   ];
@@ -138,6 +154,7 @@ function renderContact() {
 }
 
 /* ---------- 3. Typewriter – rotating roles ---------- */
+/* 🔵 [שלנו] callback – setTimeout(tick) | ⚙️ [מובנה] setTimeout, slice */
 function startTypewriter() {
   const target = $("#typer");
   if (prefersReducedMotion) {
@@ -169,6 +186,7 @@ function startTypewriter() {
 }
 
 /* ---------- 4. Count-up stats (starts when visible) ---------- */
+/* 🔵 [שלנו] | ⚙️ [מובנה] requestAnimationFrame, performance.now, Math.min, Math.pow */
 function animateCount(node) {
   const target = Number(node.dataset.target);
   const { prefix, suffix } = node.dataset;
@@ -178,12 +196,13 @@ function animateCount(node) {
   function frame(now) {
     const progress = Math.min((now - start) / duration, 1);
     const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
-    node.textContent = `${prefix}${Math.round(target * eased)}${suffix}`;
+    node.textContent = formatStat(target * eased, prefix, suffix);  // 🟢 [שיעור 2]
     if (progress < 1) requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
 }
 
+/* 🔵 [שלנו] | ⚙️ [מובנה] IntersectionObserver */
 function initCounters() {
   const observer = new IntersectionObserver((entries, obs) => {
     entries.forEach((entry) => {
@@ -198,6 +217,7 @@ function initCounters() {
 /* ---------- 5. Skills – filter + sort ---------- */
 const skillsState = { category: "all", sortDesc: null };
 
+/* 🔵 [שלנו] | ⚙️ [מובנה] filter, sort, map, replaceChildren */
 function renderSkills() {
   const body = $("#skillsBody");
   let rows = skills.filter((s) => skillsState.category === "all" || s.category === skillsState.category);
@@ -210,7 +230,7 @@ function renderSkills() {
       const tr = el("tr", { className: "row-in" }, [
         el("td", { text: skill.area }),
         el("td", { text: skill.tools }),
-        el("td", {}, [el("span", { className: `level level-${skill.level}`, text: levelNames[skill.level] })]),
+        el("td", {}, [el("span", { className: `level level-${skill.level}`, text: getLevelName(skill.level)  /* 🟢 [שיעור 2] */ })]),
       ]);
       tr.style.animationDelay = `${i * 60}ms`;
       return tr;
@@ -219,6 +239,7 @@ function renderSkills() {
   $("#skillsCaption").textContent = `מוצגים ${rows.length} מתוך ${skills.length} תחומים`;
 }
 
+/* 🔵 [שלנו] | ⚙️ [מובנה] addEventListener, closest, classList */
 function initSkillFilters() {
   const container = $("#skillFilters");
   skillCategories.forEach((cat) => {
@@ -252,6 +273,7 @@ function initSkillFilters() {
 }
 
 /* ---------- 6. Scroll effects ---------- */
+/* 🔵 [שלנו] | ⚙️ [מובנה] IntersectionObserver, requestAnimationFrame, scrollTo */
 function initScrollEffects() {
   const progress = $("#scrollProgress");
   const toTop = $("#toTop");
@@ -298,6 +320,7 @@ function initScrollEffects() {
 }
 
 /* ---------- 7. Mobile menu + theme ---------- */
+/* 🔵 [שלנו] | ⚙️ [מובנה] addEventListener, classList.toggle */
 function initMenu() {
   const toggle = $("#menuToggle");
   const links = $("#navLinks");
@@ -314,6 +337,7 @@ function initMenu() {
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") setOpen(false); });
 }
 
+/* 🔵 [שלנו] | ⚙️ [מובנה] localStorage, dataset */
 function initTheme() {
   const btn = $("#themeToggle");
   const root = document.documentElement;
@@ -336,6 +360,7 @@ function initTheme() {
 }
 
 /* ---------- 8. Card tilt + cursor glow (desktop only) ---------- */
+/* 🔵 [שלנו] | ⚙️ [מובנה] matchMedia, getBoundingClientRect */
 function initPointerEffects() {
   const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   if (!finePointer || prefersReducedMotion) return;
@@ -360,12 +385,14 @@ function initPointerEffects() {
 }
 
 /* ---------- 9. Contact form ---------- */
+/* 🔵 [שלנו] פונקציות כערכים בתוך אובייקט (functions as values) */
 const validators = {
   name: (v) => (v.trim().length >= 2 ? "" : "נא להזין שם (לפחות 2 תווים)"),
-  email: (v) => (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) ? "" : "כתובת האימייל לא תקינה"),
+  email: (v) => (isValidEmail(v) ? "" : "כתובת האימייל לא תקינה"),  // 🟢 [שיעור 2]
   message: (v) => (v.trim().length >= 10 ? "" : "ההודעה קצרה מדי (לפחות 10 תווים)"),
 };
 
+/* 🔵 [שלנו] early return, Boolean | ⚙️ [מובנה] classList.toggle */
 function validateField(input) {
   const check = validators[input.name];
   if (!check) return true;
@@ -376,6 +403,7 @@ function validateField(input) {
   return !error;
 }
 
+/* 🔵 [שלנו] | ⚙️ [מובנה] fetch, FormData, URLSearchParams, preventDefault */
 function initForm() {
   const form = $("#contactForm");
   const message = $("#message");
@@ -390,8 +418,8 @@ function initForm() {
   });
 
   message.addEventListener("input", () => {
-    counter.textContent = `${message.value.length}/500`;
-    counter.classList.toggle("near-limit", message.value.length > 450);
+    counter.textContent = formatCounter(message.value);                              // 🟢 [שיעור 2]
+    counter.classList.toggle("near-limit", isNearLimit(message.value.length));       // 🟢 [שיעור 2]
   });
 
   form.addEventListener("submit", async (e) => {
@@ -416,7 +444,7 @@ function initForm() {
       if (!res.ok) throw new Error(res.status);
       form.reset();
       fields.forEach((f) => { f.classList.remove("valid"); delete f.dataset.touched; });
-      counter.textContent = "0/500";
+      counter.textContent = formatCounter("");  // 🟢 [שיעור 2]
       showToast("ההודעה נשלחה! אחזור אליך בהקדם 🙌");
     } catch {
       showToast("השליחה נכשלה, נסו שוב או שלחו מייל", "error");

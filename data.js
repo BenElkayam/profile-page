@@ -25,7 +25,7 @@ const stats = [
   { value: 600, prefix: "~", suffix: "", label: "משתמשי Priority בארגון" },
   { value: 6, prefix: "", suffix: "+", label: "מחלקות שאני מלווה" },
   { value: 130, prefix: "", suffix: "", label: "חברות לקוח במקביל" },
-  { value: 3, prefix: "", suffix: "+", label: "שנות ניהול פרויקטים" },
+  { value: calculateYears(2023, new Date().getFullYear()), prefix: "", suffix: "+", label: "שנות ניהול פרויקטים" },  // utils.js
 ];
 
 const about = {
@@ -94,8 +94,6 @@ const skillCategories = [
   { id: "systems", label: "מערכות" },
   { id: "data", label: "נתונים ו-AI" },
 ];
-
-const levelNames = { 3: "בלמידה", 4: "מתקדם", 5: "מומחה" };
 
 const education = [
   { icon: "🎓", title: "B.Sc. במערכות מידע", text: "המרכז האקדמי למשפט ולעסקים, רמת גן. לימודי ערב, רשימת דיקן. סיום צפוי בשנת הלימודים 2026–2027." },

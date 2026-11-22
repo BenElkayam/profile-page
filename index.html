@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <!-- defer: הסקריפטים רצים אחרי שה-HTML נטען, לפי הסדר -->
+  <script src="utils.js" defer></script>
   <script src="data.js" defer></script>
   <script src="app.js" defer></script>
 </head>
@@ -114,7 +115,7 @@
             </select>
           </div>
           <div class="form-row full">
-            <label for="message">הודעה <span class="counter" id="msgCounter">0/500</span></label>
+            <label for="message">הודעה <span class="counter" id="msgCounter">0/500 · 0 מילים</span></label>
             <textarea id="message" name="message" rows="5" maxlength="500" placeholder="ספרו לי במה אוכל לעזור..."></textarea>
             <small class="error" data-for="message"></small>
           </div>
